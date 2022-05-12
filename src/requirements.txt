@@ -1,3 +1,4 @@
 Flask==2.0.1               
 flask-restful==0.3.9
 pytest=7.1.2
+aihttp=3.8.1
