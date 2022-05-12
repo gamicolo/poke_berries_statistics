@@ -10,6 +10,8 @@ from statistics import mean, median, variance
 import aiohttp
 import asyncio
 
+from typing import List
+
 #logging.basicConfig(level=logging.DEBUG, filename='stats.log', filemode='w', format='%(asctime)s %(name)s %(levelname)s %(message)s')
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
@@ -25,14 +27,14 @@ logger = logging.getLogger('berry_statistics')
 #    frequency_growth_time: time, {growth_time: frequency, ...}
 
 
-async def get_berry_data(session, url):
+async def get_berry_data(session, url: str) -> dict:
 
     async with session.get(url) as resp:
         berry_data = await resp.json()
         if berry_data.get('name') and berry_data.get('growth_time'):
             return { 'name': berry_data['name'], 'growth_time': berry_data['growth_time'] }
 
-async def get_berries_data(urls):
+async def get_berries_data(urls: List[dict]) -> List[dict]:
 
     berries_data = []
     async with aiohttp.ClientSession() as session:
@@ -47,7 +49,7 @@ async def get_berries_data(urls):
     
 class Statistics(Resource):
 
-    def get(self):
+    def get(self) -> dict:
 
         berries_data = []
         berry_statistics = {}
@@ -58,7 +60,7 @@ class Statistics(Resource):
 
         return berry_statistics,200
 
-    def _get_berries_data(self, berries):
+    def _get_berries_data(self, berries: List[dict]) -> List[dict]:
 
         urls = []
         berries_data = []
@@ -72,7 +74,7 @@ class Statistics(Resource):
 
         return  berries_data
     
-    def _get_berry_statistics(self, berries_data):
+    def _get_berry_statistics(self, berries_data: List[dict]) -> dict:
 
         berry_statistics = {}
         berry_statistics['berries_names'] = []
@@ -104,7 +106,7 @@ class Statistics(Resource):
         return berry_statistics
 
 
-def main(name):
+def main(name: str) -> None:
 
     app = Flask(name)
     api = Api(app)
