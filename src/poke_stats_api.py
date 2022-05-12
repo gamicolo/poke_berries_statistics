@@ -29,12 +29,16 @@ logger = logging.getLogger('berry_statistics')
 
 async def get_berry_data(session, url: str) -> dict:
 
+    """ Get the information name and growth_time of a berry """
+
     async with session.get(url) as resp:
         berry_data = await resp.json()
         if berry_data.get('name') and berry_data.get('growth_time'):
             return { 'name': berry_data['name'], 'growth_time': berry_data['growth_time'] }
 
 async def get_berries_data(urls: List[dict]) -> List[dict]:
+
+    """ Get the information of a list of berries """
 
     berries_data = []
     async with aiohttp.ClientSession() as session:
@@ -51,6 +55,8 @@ class Statistics(Resource):
 
     def get(self) -> dict:
 
+        """ Get the data and statistics off all berries from the Poke API """
+
         berries_data = []
         berry_statistics = {}
         berries = requests.get('https://pokeapi.co/api/v2/berry/').json()['results']
@@ -61,6 +67,8 @@ class Statistics(Resource):
         return berry_statistics,200
 
     def _get_berries_data(self, berries: List[dict]) -> List[dict]:
+
+        """ Get the data from a list of berries """
 
         urls = []
         berries_data = []
@@ -75,6 +83,8 @@ class Statistics(Resource):
         return  berries_data
     
     def _get_berry_statistics(self, berries_data: List[dict]) -> dict:
+
+        """ Get the statistics from a list of berries """
 
         berry_statistics = {}
         berry_statistics['berries_names'] = []
