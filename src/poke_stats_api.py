@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)s %(levelnam
 
 logger = logging.getLogger('berry_statistics')
 
-#def get_statistics():
+#berry statistics:
 #    berries_names: list
 #    min_growth_time: time, int
 #    median_growth_time: time, float

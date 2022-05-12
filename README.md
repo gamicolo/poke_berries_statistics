@@ -1,10 +1,21 @@
 # poke_berries_statistics
 Poke-berries statistics API
 
-##to run the API
+## To run the API
 
-    pip3 install -r requirements.txt
-    flask create_tables (only the first time to create all the tables needed)
-    flask run
+    0 - cd <path_of_the cloned_repo>/src
+    1 - pip3 install -r requirements.txt
+    2 - ./poke_stats_api.py
+    3 - ./get_berries.py
 
-The API is listening in all IP's in the port 5000
+    The API is listening in all IP's in the port 5000.
+
+    The poke_stats_api.py is the actual API to get the statistics of all berries.
+    The get_berries.py is script to test the API.
+
+## To run the unittest
+
+    0 - cd <path_of_the cloned_repo>/test
+    1 - pytest test_berry_statistics.py
+
+
