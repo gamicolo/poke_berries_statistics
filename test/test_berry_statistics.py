@@ -59,3 +59,20 @@ def test_berry_statistics_with_missing_growth_time_key_on_berry_data():
     stats = poke_stats_api.Statistics()
     result = stats._get_berry_statistics(r)
 
+def test_berry_statistics_frequency_growth_time_berries_with_single_frecuency():
+
+    r = [{'name': 'cheri', 'growth_time': 3}, {'name': 'pecha', 'growth_time': 8}, {'name': 'lum', 'growth_time': 12}]
+
+    stats = poke_stats_api.Statistics()
+    result = stats._get_berry_statistics(r)
+
+    assert result['frequency_growth_time'] == { 3: 1, 8: 1, 12: 1 }
+
+def test_berry_statistics_frequency_growth_time_berries_without_single_frecuency():
+
+    r = [{'name': 'cheri', 'growth_time': 3}, {'name': 'pecha', 'growth_time': 3}, {'name': 'lum', 'growth_time': 12}]
+
+    stats = poke_stats_api.Statistics()
+    result = stats._get_berry_statistics(r)
+
+    assert result['frequency_growth_time'] == { 3: 2, 12: 1 }
