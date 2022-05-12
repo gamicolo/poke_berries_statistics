@@ -7,6 +7,9 @@ import requests
 
 from statistics import mean, median, variance
 
+import aiohttp
+import asyncio
+
 #logging.basicConfig(level=logging.DEBUG, filename='stats.log', filemode='w', format='%(asctime)s %(name)s %(levelname)s %(message)s')
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)s %(levelname)s %(message)s')
 
@@ -22,12 +25,25 @@ logger = logging.getLogger('berry_statistics')
 #    frequency_growth_time: time, {growth_time: frequency, ...}
 
 
-#async def get_berries_data(session, url):
-#    async with session.get(url) as resp:
-#        berry_data = await resp.json()
-#            if berry_data.get('growth_time'):
-#                return berry_data['growth_time']
-#
+async def get_berry_data(session, url):
+
+    async with session.get(url) as resp:
+        berry_data = await resp.json()
+        if berry_data.get('name') and berry_data.get('growth_time'):
+            return { 'name': berry_data['name'], 'growth_time': berry_data['growth_time'] }
+
+async def get_berries_data(urls):
+
+    berries_data = []
+    async with aiohttp.ClientSession() as session:
+
+        tasks = []
+        for url in urls:
+            tasks.append(asyncio.ensure_future(get_berry_data(session, url)))
+
+        berries_data = await asyncio.gather(*tasks)
+
+    return berries_data
     
 class Statistics(Resource):
 
@@ -44,25 +60,15 @@ class Statistics(Resource):
 
     def _get_berries_data(self, berries):
 
+        urls = []
         berries_data = []
         for berry in berries:
-            if berry.get('url') and berry.get('name'):
-                berry_growth_time = requests.get(berry['url']).json()['growth_time']
-                if berry_growth_time:
-                    berries_data.append({'name':berry['name'], 'growth_time': berry_growth_time})
+            if berry.get('url'):
+                urls.append(berry['url'])
 
-        #async with aiohttp.ClientSession() as session:
+        berries_data = asyncio.run(get_berries_data(urls))
 
-        #    tasks = []
-        #    for berry in berries:
-        #        if berry.get('url') and berry.get('name'):
-        #            tasks.append(asyncio.ensure_future(get_berries_data(session,berry['url'])))
-
-        #    growth_values = await asyncio.gather(*tasks)
-
-        #    for growth_value in growth_values:
-        #        berries_data.append({'growth_time': growth_value})
-                
+        logging.debug(f"Berries data gathered: {berries_data}")
 
         return  berries_data
     
@@ -71,24 +77,20 @@ class Statistics(Resource):
         berry_statistics = {}
         berry_statistics['berries_names'] = []
         berry_statistics['min_growth_time'] = 0
-        berry_statistics['median_growth_time'] = 0
+        berry_statistics['median_growth_time'] = 0.0
         berry_statistics['max_growth_time'] = 0
-        berry_statistics['variance_growth_time'] = 0
-        berry_statistics['mean_growth_time'] = 0
-        berry_statistics['frequency_growth_time'] = 0
+        berry_statistics['variance_growth_time'] = 0.0
+        berry_statistics['mean_growth_time'] = 0.0
+        berry_statistics['frequency_growth_time'] = {}
 
         growth_values = []
         
-        #TODO: evaluar que hacer si falta alguna key, se interrumpe la ejecucion?
         for berry in berries_data:
-            if berry.get('name'):
+            if berry.get('name') and berry.get('growth_time'):
                 berry_statistics['berries_names'].append(berry['name'])
-            if berry.get('growth_time'):
                 growth_values.append(berry['growth_time'])
 
-        logging.debug('growth_values: %s' % growth_values)
         growth_values.sort()
-        logging.debug('growth_values sorted: %s' % growth_values)
 
         if growth_values:
             berry_statistics['min_growth_time'] = growth_values[0]
