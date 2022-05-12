@@ -91,6 +91,10 @@ class Statistics(Resource):
             if berry.get('name') and berry.get('growth_time'):
                 berry_statistics['berries_names'].append(berry['name'])
                 growth_values.append(berry['growth_time'])
+                if berry_statistics['frequency_growth_time'].get(berry['growth_time']):
+                    berry_statistics['frequency_growth_time'][berry['growth_time']] += 1
+                else:
+                    berry_statistics['frequency_growth_time'][berry['growth_time']] = 1
 
         growth_values.sort()
 
