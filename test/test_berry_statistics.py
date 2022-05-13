@@ -95,17 +95,4 @@ class TestGetBerriesData:
 
         assert r == []
 
-class TestGetBerryData:
-
-    @pytest.mark.asyncio
-    async def test_async_get_berry_data_empty_url(self):
-
-        url = ''
-        r = await poke_stats_api.get_berry_data(aiohttp.ClientSession(), url)
-
-        assert r == {}
-
-        #async with aiohttp.ClientSession() as session:
-        #    r = await poke_stats_api.get_berry_data(session, url)
-
 
