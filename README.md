@@ -1,4 +1,4 @@
-# poke_berries_statistics
+# Poke berries statistics
 Poke-berries statistics API
 
 ## To run the API
@@ -13,7 +13,7 @@ Poke-berries statistics API
     The poke_stats_api.py is the actual API to get the statistics of all berries.
     The get_berries.py is script to test the API.
 
-## To run the unittest
+## To run the unit tests
 
     0 - cd <path_of_the cloned_repo>/test
     1 - pytest test_berry_statistics.py
